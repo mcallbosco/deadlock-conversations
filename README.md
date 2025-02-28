@@ -1,16 +1,201 @@
 # Deadlock Conversations Viewer
 
-A web application for browsing and listening to conversations from the Deadlock game.
+A web application for browsing and listening to character conversations from the game Deadlock. This project allows users to:
+
+- Search for conversations by content
+- Browse characters and their conversation partners
+- Listen to individual dialogue lines or entire conversations
+- View conversation details including missing parts and variations
 
 ## Features
 
-- Browse all conversations between characters
-- Filter conversations by character
-- Search for specific dialogue
-- View character profiles
-- Navigate between related conversations
-- Track viewed conversations
-- Audio playback of dialogue lines
+- Character browsing: View all characters and their conversation partners
+- Conversation search: Search for specific dialogue content
+- Audio playback: Listen to individual lines or entire conversations
+- Variation selection: Choose between different variations of the same dialogue
+- Responsive design: Works on desktop and mobile devices
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or later)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/ConvoWebsite.git
+   cd ConvoWebsite/convowebsite
+   ```
+
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Run the development server:
+   ```
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+## Project Structure
+
+### Root Files
+- `next.config.mjs` - Next.js configuration for static export and GitHub Pages
+- `package.json` - Project dependencies and scripts
+- `tsconfig.json` - TypeScript configuration
+- `tailwind.config.ts` - Tailwind CSS configuration
+- `postcss.config.js` - PostCSS configuration for Tailwind
+
+### Directories
+- `/public` - Static assets including audio files and character icons
+  - `/audioFiles` - MP3 files of character dialogue
+  - `/minimapIcons` - Character portrait images
+  - `Sample.json` - The main data file containing all conversation information
+
+- `/src` - Source code for the application
+  - `/app` - Next.js app router pages
+  - `/components` - Reusable React components
+  - `/types` - TypeScript type definitions
+  - `/utils` - Utility functions and data context
+
+### Key Files Explained
+
+#### App Pages
+- `/src/app/page.tsx` - Homepage with introduction and navigation
+- `/src/app/characters/page.tsx` - List of all characters
+- `/src/app/characters/[name]/page.tsx` - Server component for character details
+- `/src/app/characters/[name]/CharacterPageClient.tsx` - Client component for character UI
+- `/src/app/conversations/page.tsx` - List of all conversations with search
+- `/src/app/conversations/[id]/page.tsx` - Server component for conversation details
+- `/src/app/conversations/[id]/ConversationPageClient.tsx` - Client component for conversation UI
+- `/src/app/layout.tsx` - Root layout with navigation and data provider
+
+#### Components
+- `/src/components/Layout.tsx` - Main layout with navigation
+- `/src/components/CharacterCard.tsx` - Card component for character display
+- `/src/components/ConversationCard.tsx` - Card component for conversation display
+- `/src/components/ConversationPlayer.tsx` - Audio player for conversations
+- `/src/components/DialogueLine.tsx` - Individual dialogue line with audio controls
+- `/src/components/LoadingSpinner.tsx` - Loading indicator
+- `/src/components/SearchBar.tsx` - Search input component
+- `/src/components/VariationSelector.tsx` - Selector for dialogue variations
+
+#### Utils
+- `/src/utils/DataContext.tsx` - React context for global data state
+- `/src/utils/dataUtils.ts` - Functions for data loading and manipulation
+
+#### Types
+- `/src/types/index.ts` - TypeScript interfaces for data structures
+
+## Website Flow
+
+### Data Flow
+1. **Data Loading**: 
+   - The application loads conversation data from `Sample.json` using the `loadConversationData` function in `dataUtils.ts`
+   - For server components, data is loaded directly from the file system
+   - For client components, data is fetched via HTTP request
+
+2. **Data Context**:
+   - The `DataProvider` in `DataContext.tsx` makes the data available throughout the application
+   - Components can access data using the `useData` hook
+
+### User Flow
+
+1. **Homepage** (`/`):
+   - Introduction to the application
+   - Navigation links to Characters and Conversations pages
+
+2. **Characters Page** (`/characters`):
+   - Grid of character cards with portraits
+   - Clicking a character navigates to their detail page
+
+3. **Character Detail Page** (`/characters/[name]`):
+   - Character information and portrait
+   - List of conversation partners
+   - List of conversations featuring the character
+   - Links to conversation detail pages
+
+4. **Conversations Page** (`/conversations`):
+   - Search bar for finding conversations by content
+   - List of all conversations with summaries
+   - Clicking a conversation navigates to its detail page
+
+5. **Conversation Detail Page** (`/conversations/[id]`):
+   - Conversation information
+   - Audio player for the entire conversation
+   - Individual dialogue lines with speaker information
+   - Variation selector for lines with multiple versions
+   - Links to character pages for both participants
+
+### Static Site Generation
+- The application uses Next.js's static site generation for all pages
+- Dynamic routes (`[name]` and `[id]`) use `generateStaticParams` to pre-render all possible paths
+- This enables deployment to GitHub Pages as a fully static site
+
+## Deployment to Cloudflare Pages
+
+### Prerequisites
+
+- A Cloudflare account
+- Git repository with your code (GitHub, GitLab, etc.)
+
+### Deployment Steps
+
+1. **Login to Cloudflare Dashboard**
+   - Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Navigate to "Pages"
+
+2. **Create a new project**
+   - Click "Create a project"
+   - Connect your Git provider (GitHub, GitLab, etc.)
+   - Select the repository containing your Deadlock Conversations Viewer
+
+3. **Configure build settings**
+   - Set the following build settings:
+     - Framework preset: Next.js
+     - Build command: `npm run build`
+     - Build output directory: `out`
+     - Root directory: `/` (or the directory containing your project if in a monorepo)
+     - Node.js version: 18 (or higher)
+
+4. **Environment variables**
+   - No environment variables are required for basic functionality
+
+5. **Deploy**
+   - Click "Save and Deploy"
+   - Wait for the build and deployment to complete
+
+6. **Custom domain (optional)**
+   - In your project settings, go to "Custom domains"
+   - Add your custom domain and follow the instructions to set up DNS
+
+## Local Development
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the development server:
+   ```
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Build for Production
+
+To build the application for production:
+
+```
+npm run build
+```
+
+The build output will be in the `out` directory, which can be deployed to any static hosting service.
 
 ## Technologies Used
 
@@ -19,27 +204,39 @@ A web application for browsing and listening to conversations from the Deadlock 
 - TypeScript
 - Tailwind CSS
 
-## Development
+## Data Format
 
-To run the development server:
+The application uses a JSON file with the following structure:
 
-```bash
-npm run dev
+```json
+{
+  "export_date": "2025-02-27T21:31:53.771707",
+  "total_conversations": 3,
+  "conversations": [
+    {
+      "conversation_id": "astro_chrono_convo01",
+      "character1": "astro",
+      "character2": "chrono",
+      "conversation_number": "01",
+      "is_complete": false,
+      "missing_parts": [1],
+      "starter": "astro",
+      "lines": [
+        {
+          "part": 2,
+          "variation": 1,
+          "speaker": "astro",
+          "filename": "astro_match_start_astro_chrono_convo01_02.mp3",
+          "transcription": "I don't care about you or your friends.",
+          "has_transcription": true
+        }
+      ],
+      "summary": "[Not enough transcribed content for summary]"
+    }
+  ]
+}
 ```
-
-## Deployment
-
-To deploy to GitHub Pages:
-
-```bash
-npm run deploy
-```
-
-## Credits
-
-- Designed by [Mcall](https://mcallbos.co)
-- Deadlock is a trademark of Valve Corporation
 
 ## License
 
-This is a fan project and not affiliated with Valve Corporation.
+This project is for personal use only. All game assets belong to their respective owners.

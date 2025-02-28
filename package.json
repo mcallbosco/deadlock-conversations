@@ -2,7 +2,6 @@
   "name": "convowebsite",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://mcallbos.github.io/deadlock-conversations",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
