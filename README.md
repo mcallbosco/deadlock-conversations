@@ -137,72 +137,18 @@ A web application for browsing and listening to character conversations from the
 - Dynamic routes (`[name]` and `[id]`) use `generateStaticParams` to pre-render all possible paths
 - This enables deployment to GitHub Pages as a fully static site
 
-## Deployment to Cloudflare Pages
+## Deployment
 
-### Prerequisites
-
-- A Cloudflare account
-- Git repository with your code (GitHub, GitLab, etc.)
-
-### Deployment Steps
-
-1. **Login to Cloudflare Dashboard**
-   - Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/)
-   - Navigate to "Pages"
-
-2. **Create a new project**
-   - Click "Create a project"
-   - Connect your Git provider (GitHub, GitLab, etc.)
-   - Select the repository containing your Deadlock Conversations Viewer
-
-3. **Configure build settings**
-   - Set the following build settings:
-     - Framework preset: Next.js
-     - Build command: `npm run build`
-     - Build output directory: `out`
-     - Root directory: `/` (or the directory containing your project if in a monorepo)
-     - Node.js version: 18 (or higher)
-
-4. **Environment variables**
-   - No environment variables are required for basic functionality
-
-5. **Deploy**
-   - Click "Save and Deploy"
-   - Wait for the build and deployment to complete
-
-6. **Custom domain (optional)**
-   - In your project settings, go to "Custom domains"
-   - Add your custom domain and follow the instructions to set up DNS
-
-## Local Development
-
-1. Clone the repository
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Build for Production
-
-To build the application for production:
+This project is configured for GitHub Pages deployment:
 
 ```
-npm run build
+npm run deploy
 ```
 
-The build output will be in the `out` directory, which can be deployed to any static hosting service.
-
-## Technologies Used
-
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
+This script:
+1. Builds the application with `next build`
+2. Creates a `.nojekyll` file to bypass GitHub Pages processing
+3. Deploys the `out` directory to GitHub Pages using `gh-pages`
 
 ## Data Format
 
