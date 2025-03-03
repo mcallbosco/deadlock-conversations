@@ -4,6 +4,7 @@ import AudioPlayer, { AudioPlayerRef } from './AudioPlayer';
 import Image from 'next/image';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
+import { getBasePath } from '@/utils/dataUtils';
 
 interface ConversationPlayerProps {
   conversation: Conversation;
@@ -136,7 +137,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({ conversation })
       // Fetch and decode all audio files
       for (let i = 0; i < sortedLines.length; i++) {
         const line = sortedLines[i];
-        const audioUrl = `/audioFiles/${line.filename}`;
+        const basePath = getBasePath();
+        const audioUrl = `${basePath}/audioFiles/${line.filename}`;
         
         try {
           const buffer = await fetchAndDecodeAudio(audioUrl, audioContext);
@@ -258,7 +260,8 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({ conversation })
   const getIconPath = (characterName: string) => {
     // Get the correct portrait file name
     const portraitName = getPortraitFileName(characterName);
-    return `/minimapIcons/${portraitName}_mm_psd.png`;
+    const basePath = getBasePath();
+    return `${basePath}/minimapIcons/${portraitName}_mm_psd.png`;
   };
 
   // Initialize refs array when sorted lines change
@@ -403,7 +406,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({ conversation })
                       className="object-cover rounded-full"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = '/minimapIcons/genericperson_mm_psd.png';
+                        target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                       }}
                     />
                   </div>
@@ -426,7 +429,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({ conversation })
                   <div className="mt-2">
                     <AudioPlayer 
                       ref={(el) => { audioPlayerRefs.current[index] = el; }}
-                      audioSrc={`/audioFiles/${line.filename}`}
+                      audioSrc={`${getBasePath()}/audioFiles/${line.filename}`}
                       isPlaying={playingLineIndex === index}
                       onPlayStateChange={(isPlaying) => handleLinePlayStateChange(index, isPlaying)}
                     />

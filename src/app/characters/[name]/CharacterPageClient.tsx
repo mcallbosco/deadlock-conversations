@@ -9,6 +9,7 @@ import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
 import { usePathname, useRouter } from 'next/navigation';
 import { resetCharacterViewedConversations } from '@/utils/viewedConversations';
+import { getBasePath } from '@/utils/dataUtils';
 
 // Key for storing previous path in session storage
 const PREV_PATH_KEY = 'previousPath';
@@ -122,7 +123,8 @@ export default function CharacterPageClient({
   const getIconPath = (characterName: string) => {
     // Get the correct portrait file name
     const portraitName = getPortraitFileName(characterName);
-    return `/minimapIcons/${portraitName}_mm_psd.png`;
+    const basePath = getBasePath();
+    return `${basePath}/minimapIcons/${portraitName}_mm_psd.png`;
   };
   
   // Toggle a partner in the selected partners array
@@ -218,7 +220,7 @@ export default function CharacterPageClient({
                 className="object-cover rounded-full"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/minimapIcons/genericperson_mm_psd.png';
+                  target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                 }}
               />
             </div>
@@ -256,7 +258,7 @@ export default function CharacterPageClient({
                         className="object-cover rounded-full"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = '/minimapIcons/genericperson_mm_psd.png';
+                          target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                         }}
                       />
                     </div>
@@ -315,7 +317,7 @@ export default function CharacterPageClient({
                       className="object-cover rounded-full"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = '/minimapIcons/genericperson_mm_psd.png';
+                        target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                       }}
                     />
                   </div>
@@ -357,4 +359,4 @@ export default function CharacterPageClient({
       </div>
     </div>
   );
-} 
+}
