@@ -1,8 +1,11 @@
 import { ConversationData, Conversation, Character } from '../types';
 
 // The path to the JSON data file - can be easily changed
-// Using a path that works with Next.js
-export const DATA_FILE_PATH = '/Sample.json';
+// Using a path that works with Next.js, adjusting for basePath in production
+export const DATA_FILE_PATH = 
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
+    ? '/deadlock-conversations/Sample.json'
+    : '/Sample.json';
 
 // Function to load conversation data
 export async function loadConversationData(): Promise<ConversationData> {

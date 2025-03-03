@@ -31,7 +31,9 @@ jobs:
           fi
           
       - name: Touch .nojekyll
-        run: touch out/.nojekyll
+        run: |
+          mkdir -p out
+          touch out/.nojekyll
         
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
