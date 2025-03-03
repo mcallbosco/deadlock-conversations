@@ -1,11 +1,15 @@
 import { ConversationData, Conversation, Character } from '../types';
 
+// Get the base path based on the environment
+export function getBasePath(): string {
+  return (typeof window !== 'undefined' && window.location.hostname !== 'localhost') 
+    ? '/deadlock-conversations'
+    : '';
+}
+
 // The path to the JSON data file - can be easily changed
 // Using a path that works with Next.js, adjusting for basePath in production
-export const DATA_FILE_PATH = 
-  typeof window !== 'undefined' && window.location.hostname !== 'localhost' 
-    ? '/deadlock-conversations/Sample.json'
-    : '/Sample.json';
+export const DATA_FILE_PATH = `${getBasePath()}/Sample.json`;
 
 // Function to load conversation data
 export async function loadConversationData(): Promise<ConversationData> {
@@ -49,9 +53,11 @@ export function getAllCharacters(data: ConversationData): Character[] {
   });
   
   // Convert to Character objects
+  const basePath = getBasePath();
+    
   return Array.from(characterMap.entries()).map(([name, partners]) => ({
     name,
-    iconPath: `/minimapIcons/${name}_mm_psd.png`,
+    iconPath: `${basePath}/minimapIcons/${name}_mm_psd.png`,
     conversationPartners: Array.from(partners)
   }));
 }

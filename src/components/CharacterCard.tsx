@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
+import { getBasePath } from '@/utils/dataUtils';
 
 interface CharacterCardProps {
   name: string;
@@ -18,7 +19,8 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ name, iconPath, conversat
   const getIconPath = (characterName: string) => {
     // Get the correct portrait file name
     const portraitName = getPortraitFileName(characterName);
-    return `/minimapIcons/${portraitName}_mm_psd.png`;
+    const basePath = getBasePath();
+    return `${basePath}/minimapIcons/${portraitName}_mm_psd.png`;
   };
   
   return (
@@ -35,7 +37,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ name, iconPath, conversat
               onError={(e) => {
                 // Fallback to a generic icon if the character icon is not found
                 const target = e.target as HTMLImageElement;
-                target.src = '/minimapIcons/genericperson_mm_psd.png';
+                target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
               }}
             />
           </div>
@@ -49,4 +51,4 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ name, iconPath, conversat
   );
 };
 
-export default CharacterCard; 
+export default CharacterCard;

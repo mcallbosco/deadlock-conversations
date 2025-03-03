@@ -4,6 +4,7 @@ import { Conversation } from '../types';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
 import { isConversationViewed } from '@/utils/viewedConversations';
+import { getBasePath } from '@/utils/dataUtils';
 
 interface ConversationCardProps {
   conversation: Conversation;
@@ -45,7 +46,8 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, highl
   const getIconPath = (characterName: string) => {
     // Get the correct portrait file name
     const portraitName = getPortraitFileName(characterName);
-    return `/minimapIcons/${portraitName}_mm_psd.png`;
+    const basePath = getBasePath();
+    return `${basePath}/minimapIcons/${portraitName}_mm_psd.png`;
   };
   
   return (
@@ -80,7 +82,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, highl
                 className={`object-cover rounded-full ${isViewed ? 'opacity-70' : ''}`}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/minimapIcons/genericperson_mm_psd.png';
+                  target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                 }}
               />
             </div>
@@ -96,7 +98,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, highl
                   className={`object-cover rounded-full border-2 border-gray-800 ${isViewed ? 'opacity-70' : ''}`}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/minimapIcons/genericperson_mm_psd.png';
+                    target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                   }}
                 />
               </div>
@@ -109,7 +111,7 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, highl
                   className={`object-cover rounded-full border-2 border-gray-800 ${isViewed ? 'opacity-70' : ''}`}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    target.src = '/minimapIcons/genericperson_mm_psd.png';
+                    target.src = `${getBasePath()}/minimapIcons/genericperson_mm_psd.png`;
                   }}
                 />
               </div>
@@ -144,4 +146,4 @@ const ConversationCard: React.FC<ConversationCardProps> = ({ conversation, highl
   );
 };
 
-export default ConversationCard; 
+export default ConversationCard;
