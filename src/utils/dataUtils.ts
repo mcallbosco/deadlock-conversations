@@ -7,35 +7,21 @@ export const DATA_FILE_PATH = '/Sample.json';
 // Function to load conversation data
 export async function loadConversationData(): Promise<ConversationData> {
   try {
-    // For server components, we need to use an absolute URL
-    // In a server component, we need to use the full URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
-    const isServer = typeof window === 'undefined';
-    
-    // Use a different approach for server vs client
-    let data: ConversationData;
-    
-    if (isServer) {
-      // For static site generation, use a local import
-      // This is a workaround for Next.js static site generation
-      const fs = require('fs');
-      const path = require('path');
-      const jsonPath = path.join(process.cwd(), 'public', 'Sample.json');
-      const fileContents = fs.readFileSync(jsonPath, 'utf8');
-      data = JSON.parse(fileContents);
-    } else {
-      // In the browser, use fetch with the public path
-      const response = await fetch(DATA_FILE_PATH);
-      if (!response.ok) {
-        throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
-      }
-      data = await response.json();
+    // In the browser, use fetch with the public path
+    const response = await fetch(DATA_FILE_PATH);
+    if (!response.ok) {
+      throw new Error(`Failed to load data: ${response.status} ${response.statusText}`);
     }
-    
+    const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error loading conversation data:', error);
-    throw error;
+    // Return an empty data structure to avoid breaking the UI
+    return { 
+      export_date: new Date().toISOString(),
+      total_conversations: 0,
+      conversations: []
+    };
   }
 }
 
