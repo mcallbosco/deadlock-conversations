@@ -15,7 +15,7 @@
 
 # next.js
 /.next/
-/out/
+# /out/ # Temporarily allowing out directory for deployment
 
 # production
 /build

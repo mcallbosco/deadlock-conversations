@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t true"
+    "deploy": "next build && touch out/.nojekyll && gh-pages -d out -t true",
+    "static-deploy": "NODE_ENV=production npm run build && touch out/.nojekyll && gh-pages -d out -t true"
   },
   "dependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.0.9",
     "next": "15.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
