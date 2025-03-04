@@ -1,7 +1,7 @@
 'use client';
 
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React, { ReactNode } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 interface LayoutProps {
@@ -17,27 +17,37 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { href: '/conversations', label: 'All Conversations' },
   ];
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    window.location.href = href;
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <header className="bg-gray-800 shadow-md">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-blue-400">
+            <a 
+              href="/" 
+              onClick={(e) => handleNavClick(e, '/')}
+              className="text-2xl font-bold text-blue-400"
+            >
               Deadlock Conversations
-            </Link>
+            </a>
             
             <nav>
               <ul className="flex space-x-6">
                 {navLinks.map((link) => (
                   <li key={link.href}>
-                    <Link 
+                    <a 
                       href={link.href}
+                      onClick={(e) => handleNavClick(e, link.href)}
                       className={`hover:text-blue-400 transition-colors ${
                         pathname === link.href ? 'text-blue-400 font-semibold' : 'text-gray-300'
                       }`}
                     >
                       {link.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
