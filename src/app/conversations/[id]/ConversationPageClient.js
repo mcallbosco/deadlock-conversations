@@ -3,15 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import ConversationPlayer from '@/components/ConversationPlayer';
 import Link from 'next/link';
-import { Conversation } from '@/types';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { useRouter, usePathname } from 'next/navigation';
 import { useData } from '@/utils/DataContext';
-import { markConversationAsViewed, isConversationViewed } from '@/utils/viewedConversations';
-
-interface ConversationPageClientProps {
-  conversation: Conversation;
-}
+import { markConversationAsViewed } from '@/utils/viewedConversations';
 
 // Key for storing previous path in session storage
 const PREV_PATH_KEY = 'previousPath';
@@ -24,22 +19,22 @@ const CHARACTER_FILTER_KEY = 'characterFilter';
 // Key for storing completeness filter in session storage
 const COMPLETENESS_FILTER_KEY = 'completenessFilter';
 
-export default function ConversationPageClient({ conversation }: ConversationPageClientProps) {
+export default function ConversationPageClient({ conversation }) {
   const router = useRouter();
   const currentPath = usePathname();
-  const [previousPath, setPreviousPath] = useState<string>('/conversations');
+  const [previousPath, setPreviousPath] = useState('/conversations');
   const { data } = useData();
-  const [relatedConversations, setRelatedConversations] = useState<Conversation[]>([]);
-  const [characterConversations, setCharacterConversations] = useState<Conversation[]>([]);
-  const [searchResults, setSearchResults] = useState<Conversation[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [characterIndex, setCharacterIndex] = useState<number>(0);
-  const [searchIndex, setSearchIndex] = useState<number>(0);
-  const [selectedPartners, setSelectedPartners] = useState<string[]>([]);
-  const [sourceCharacter, setSourceCharacter] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
-  const [characterFilter, setCharacterFilter] = useState<string | null>(null);
-  const [completenessFilter, setCompletenessFilter] = useState<string | null>(null);
+  const [relatedConversations, setRelatedConversations] = useState([]);
+  const [characterConversations, setCharacterConversations] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [characterIndex, setCharacterIndex] = useState(0);
+  const [searchIndex, setSearchIndex] = useState(0);
+  const [selectedPartners, setSelectedPartners] = useState([]);
+  const [sourceCharacter, setSourceCharacter] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(null);
+  const [characterFilter, setCharacterFilter] = useState(null);
+  const [completenessFilter, setCompletenessFilter] = useState(null);
   
   // Get proper display names for characters
   const char1DisplayName = getProperCharacterName(conversation.character1);
@@ -244,14 +239,16 @@ export default function ConversationPageClient({ conversation }: ConversationPag
   
   // Handle back button click
   const handleBackClick = () => {
-    router.push(previousPath);
+    // Use window.history.back() instead of router.push to properly navigate back
+    window.history.back();
   };
   
   // Navigate to the previous conversation between the same characters
   const handlePrevConversation = () => {
     if (currentIndex > 0 && relatedConversations.length > 1) {
       const prevConvo = relatedConversations[currentIndex - 1];
-      router.push(`/conversations/${encodeURIComponent(prevConvo.conversation_id)}`);
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(prevConvo.conversation_id)}`;
     }
   };
   
@@ -259,7 +256,8 @@ export default function ConversationPageClient({ conversation }: ConversationPag
   const handleNextConversation = () => {
     if (currentIndex < relatedConversations.length - 1) {
       const nextConvo = relatedConversations[currentIndex + 1];
-      router.push(`/conversations/${encodeURIComponent(nextConvo.conversation_id)}`);
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(nextConvo.conversation_id)}`;
     }
   };
   
@@ -267,7 +265,8 @@ export default function ConversationPageClient({ conversation }: ConversationPag
   const handlePrevCharacterConversation = () => {
     if (characterIndex > 0 && characterConversations.length > 1) {
       const prevConvo = characterConversations[characterIndex - 1];
-      router.push(`/conversations/${encodeURIComponent(prevConvo.conversation_id)}`);
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(prevConvo.conversation_id)}`;
     }
   };
   
@@ -275,23 +274,26 @@ export default function ConversationPageClient({ conversation }: ConversationPag
   const handleNextCharacterConversation = () => {
     if (characterIndex < characterConversations.length - 1) {
       const nextConvo = characterConversations[characterIndex + 1];
-      router.push(`/conversations/${encodeURIComponent(nextConvo.conversation_id)}`);
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(nextConvo.conversation_id)}`;
     }
   };
   
   // Navigate to the previous search result
   const handlePrevSearchResult = () => {
     if (searchIndex > 0 && searchResults.length > 1) {
-      const prevConvo = searchResults[searchIndex - 1];
-      router.push(`/conversations/${encodeURIComponent(prevConvo.conversation_id)}`);
+      const prevResult = searchResults[searchIndex - 1];
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(prevResult.conversation_id)}`;
     }
   };
   
   // Navigate to the next search result
   const handleNextSearchResult = () => {
     if (searchIndex < searchResults.length - 1) {
-      const nextConvo = searchResults[searchIndex + 1];
-      router.push(`/conversations/${encodeURIComponent(nextConvo.conversation_id)}`);
+      const nextResult = searchResults[searchIndex + 1];
+      // Use window.location.href to force a full page reload
+      window.location.href = `/conversations/${encodeURIComponent(nextResult.conversation_id)}`;
     }
   };
   
@@ -361,7 +363,7 @@ export default function ConversationPageClient({ conversation }: ConversationPag
           <div className="flex items-center space-x-4">
             <span className="text-gray-400">
               Search Result {searchIndex + 1} of {searchResults.length}
-              {searchTerm && <span className="ml-1">for "{searchTerm}"</span>}
+              {searchTerm && <span className="ml-1">&quot;{searchTerm}&quot;</span>}
             </span>
             <div className="flex space-x-2">
               <button
@@ -480,14 +482,14 @@ export default function ConversationPageClient({ conversation }: ConversationPag
           href={`/characters/${conversation.character1}`} 
           className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white"
         >
-          View {char1DisplayName}'s Profile
+          View {char1DisplayName}&apos;s Profile
         </Link>
         
         <Link 
           href={`/characters/${conversation.character2}`} 
           className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white"
         >
-          View {char2DisplayName}'s Profile
+          View {char2DisplayName}&apos;s Profile
         </Link>
       </div>
       
@@ -525,6 +527,21 @@ export default function ConversationPageClient({ conversation }: ConversationPag
               </div>
             ))}
           </div>
+        </div>
+      )}
+      
+      {sourceCharacter && (
+        <div className="text-sm text-gray-400">
+          {getProperCharacterName(sourceCharacter)}&apos;s conversations
+          {selectedPartners.length > 0 && (
+            <span> with selected partners</span>
+          )}
+        </div>
+      )}
+      
+      {sourceCharacter && (
+        <div className="text-sm text-gray-400">
+          {getProperCharacterName(sourceCharacter)}&apos;s complete conversations
         </div>
       )}
     </div>

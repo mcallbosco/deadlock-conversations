@@ -5,6 +5,13 @@ import Image from 'next/image';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
 
+// Declare the webkitAudioContext for Safari support
+declare global {
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
+}
+
 interface ConversationPlayerProps {
   conversation: Conversation;
 }
@@ -127,7 +134,7 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({ conversation })
     try {
       // Create audio context if it doesn't exist
       if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
       }
       
       const audioContext = audioContextRef.current;

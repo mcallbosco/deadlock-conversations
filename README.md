@@ -139,16 +139,40 @@ A web application for browsing and listening to character conversations from the
 
 ## Deployment
 
-This project is configured for GitHub Pages deployment:
+### Option 1: Deploy as a Static Website (Recommended)
 
-```
-npm run deploy
-```
+1. **Build the static site**:
+   ```bash
+   npm run build
+   ```
+   This creates a static export in the `out` directory.
 
-This script:
-1. Builds the application with `next build`
-2. Creates a `.nojekyll` file to bypass GitHub Pages processing
-3. Deploys the `out` directory to GitHub Pages using `gh-pages`
+2. **Host the static files**:
+   - Upload all files from the `out` directory to any static hosting service
+   - Options include GitHub Pages, Netlify, Vercel, Amazon S3, or any web server
+   - For GitHub Pages deployment, you can use:
+     ```
+     npm run deploy
+     ```
+
+3. **Ensure audio files are accessible**:
+   - The `public/audioFiles` directory must be accessible at the same relative path
+   - All audio files should be in the correct location relative to your HTML files
+
+### Option 2: Manual Deployment
+
+If you're having trouble with the build process:
+
+1. **Copy the following essential files**:
+   - HTML: Copy the main index.html file and create folders for characters and conversations
+   - CSS: Create a styles.css file with your styling
+   - JavaScript: Include the necessary JavaScript files for functionality
+   - JSON: Include the Sample.json file in the root directory
+   - Audio: Copy all files from `public/audioFiles` to an audioFiles directory
+
+2. **Adjust any paths as needed**:
+   - Update audio file references to point to the correct location
+   - Ensure all links between pages work correctly
 
 ## Data Format
 

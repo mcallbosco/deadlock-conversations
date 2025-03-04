@@ -1,27 +1,25 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useData } from '@/utils/DataContext';
 import ConversationCard from '@/components/ConversationCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SearchBar from '@/components/SearchBar';
 import FilterBar from '@/components/FilterBar';
 import { Conversation } from '@/types';
-import Link from 'next/link';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { resetAllViewedConversations } from '@/utils/viewedConversations';
 
 // Key for storing previous path in session storage
 const PREV_PATH_KEY = 'previousPath';
 
-export default function ConversationsPage() {
+// Component that uses useSearchParams
+function ConversationsContent() {
   const { data, loading, error } = useData();
   const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const currentPath = usePathname();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const [refreshKey, setRefreshKey] = useState(0);
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -40,6 +38,45 @@ export default function ConversationsPage() {
       value: 'all',
     },
   });
+
+  // Define applyFilters with useCallback to avoid dependency issues
+  const applyFilters = useCallback(
+    (
+      conversations: Conversation[], 
+      search: string, 
+      currentFilters: typeof filters
+    ) => {
+      let filtered = [...conversations];
+      
+      // Apply search filter
+      if (search.trim() !== '') {
+        const lowerSearch = search.toLowerCase();
+        filtered = filtered.filter(convo => 
+          convo.lines.some(line => line.transcription.toLowerCase().includes(lowerSearch)) ||
+          convo.summary.toLowerCase().includes(lowerSearch) ||
+          convo.character1.toLowerCase().includes(lowerSearch) ||
+          convo.character2.toLowerCase().includes(lowerSearch)
+        );
+      }
+      
+      // Apply character filter
+      if (currentFilters.character.value !== 'all') {
+        const character = currentFilters.character.value;
+        filtered = filtered.filter(convo => 
+          convo.character1 === character || convo.character2 === character
+        );
+      }
+      
+      // Apply completeness filter
+      if (currentFilters.completeness.value !== 'all') {
+        const isComplete = currentFilters.completeness.value === 'complete';
+        filtered = filtered.filter(convo => convo.is_complete === isComplete);
+      }
+      
+      setFilteredConversations(filtered);
+    },
+    []
+  );
 
   // Store current path for navigation tracking
   useEffect(() => {
@@ -88,9 +125,9 @@ export default function ConversationsPage() {
       }));
       
       // Initialize filtered conversations
-      applyFilters(data.conversations, '', filters);
+      applyFilters(data.conversations, searchTerm, filters);
     }
-  }, [data]);
+  }, [data, searchTerm, filters, applyFilters]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -113,41 +150,6 @@ export default function ConversationsPage() {
     if (data) {
       applyFilters(data.conversations, searchTerm, updatedFilters);
     }
-  };
-
-  const applyFilters = (
-    conversations: Conversation[], 
-    search: string, 
-    currentFilters: typeof filters
-  ) => {
-    let filtered = [...conversations];
-    
-    // Apply search filter
-    if (search.trim() !== '') {
-      const lowerSearch = search.toLowerCase();
-      filtered = filtered.filter(convo => 
-        convo.lines.some(line => line.transcription.toLowerCase().includes(lowerSearch)) ||
-        convo.summary.toLowerCase().includes(lowerSearch) ||
-        convo.character1.toLowerCase().includes(lowerSearch) ||
-        convo.character2.toLowerCase().includes(lowerSearch)
-      );
-    }
-    
-    // Apply character filter
-    if (currentFilters.character.value !== 'all') {
-      const character = currentFilters.character.value;
-      filtered = filtered.filter(convo => 
-        convo.character1 === character || convo.character2 === character
-      );
-    }
-    
-    // Apply completeness filter
-    if (currentFilters.completeness.value !== 'all') {
-      const isComplete = currentFilters.completeness.value === 'complete';
-      filtered = filtered.filter(convo => convo.is_complete === isComplete);
-    }
-    
-    setFilteredConversations(filtered);
   };
 
   // Handle conversation card click
@@ -179,8 +181,9 @@ export default function ConversationsPage() {
       sessionStorage.removeItem('completenessFilter');
     }
     
-    // Navigate to conversation
-    router.push(`/conversations/${conversationId}`);
+    // Navigate to conversation - encode the conversation ID to handle special characters
+    // Use window.location.href instead of router.push to force a full page reload
+    window.location.href = `/conversations/${encodeURIComponent(conversationId)}`;
   };
 
   // Handle resetting all viewed conversations
@@ -255,5 +258,14 @@ export default function ConversationsPage() {
         )}
       </section>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function ConversationsPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner size="large" message="Loading conversations..." />}>
+      <ConversationsContent />
+    </Suspense>
   );
 } 

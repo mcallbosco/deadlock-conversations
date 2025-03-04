@@ -1,3 +1,5 @@
+import { Conversation } from '@/types';
+
 // Key for storing viewed conversations in local storage
 const VIEWED_CONVERSATIONS_KEY = 'viewedConversations';
 
@@ -75,7 +77,7 @@ export function resetAllViewedConversations(): void {
  * @param characterName The name of the character to reset viewed conversations for
  * @param conversations Array of all conversations to filter by character
  */
-export function resetCharacterViewedConversations(characterName: string, conversations: any[]): void {
+export function resetCharacterViewedConversations(characterName: string, conversations: Conversation[]): void {
   if (typeof window === 'undefined') return;
   
   try {

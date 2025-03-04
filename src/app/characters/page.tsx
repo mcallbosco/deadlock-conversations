@@ -63,7 +63,6 @@ export default function CharactersPage() {
               <CharacterCard
                 key={character.name}
                 name={character.name}
-                iconPath={character.iconPath}
                 conversationCount={character.conversationPartners.length}
               />
             ))}

@@ -6,11 +6,10 @@ import { getPortraitFileName } from '@/utils/portraitMapping';
 
 interface CharacterCardProps {
   name: string;
-  iconPath: string;
   conversationCount: number;
 }
 
-const CharacterCard: React.FC<CharacterCardProps> = ({ name, iconPath, conversationCount }) => {
+const CharacterCard: React.FC<CharacterCardProps> = ({ name, conversationCount }) => {
   // Get the proper display name for the character
   const displayName = getProperCharacterName(name);
   

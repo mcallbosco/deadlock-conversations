@@ -1,15 +1,23 @@
 import React from 'react';
 import { getConversationById, loadConversationData } from '@/utils/dataUtils';
-import ClientWrapper from './ClientWrapper';
+import ConversationPageClient from './ConversationPageClient';
 import { notFound } from 'next/navigation';
+
+// Simple interface for the page props without any type constraints
+interface ConversationPageProps {
+  params: {
+    id: string;
+  };
+  searchParams?: Record<string, string | string[]>;
+}
 
 // This function is required for static site generation with dynamic routes
 export async function generateStaticParams() {
   try {
     const data = await loadConversationData();
     
-    // Create a set of all possible conversation IDs
-    const allIds = new Set();
+    // Create a set of all possible conversation IDs, including URL-encoded versions
+    const allIds = new Set<string>();
     
     data.conversations.forEach(conversation => {
       const id = conversation.conversation_id;
@@ -17,13 +25,11 @@ export async function generateStaticParams() {
       // Add the regular ID
       allIds.add(id);
       
-      // Always add the URL-encoded version to ensure all special characters are handled
-      if (id !== encodeURIComponent(id)) {
+      // Add URL-encoded version if it contains spaces or special characters
+      if (id.includes(' ') || id.includes('%') || id.includes('&') || id.includes('+')) {
         allIds.add(encodeURIComponent(id));
       }
     });
-    
-    console.log(`Generating static params for ${allIds.size} conversation IDs`);
     
     // Convert to the format Next.js expects
     return Array.from(allIds).map(id => ({
@@ -31,16 +37,11 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     console.error('Error generating static params:', error);
-    // Return a minimal set of params to allow the build to continue
-    return [
-      { id: 'sample_conversation_1' }, 
-      { id: 'sample_conversation_2' },
-      { id: 'sample_conversation_3' }
-    ];
+    return [];
   }
 }
 
-export default async function ConversationPage({ params }) {
+export default async function ConversationPage({ params }: ConversationPageProps) {
   // Ensure params is properly awaited
   const id = params?.id;
   
@@ -64,7 +65,7 @@ export default async function ConversationPage({ params }) {
     }
     
     // Pass the pre-fetched data to the client component
-    return <ClientWrapper conversationId={decodedId} conversation={conversation} />;
+    return <ConversationPageClient conversation={conversation} />;
   } catch (error) {
     console.error('Error loading conversation data:', error);
     return <div className="bg-red-900/30 border border-red-800 rounded-lg p-4 text-center">

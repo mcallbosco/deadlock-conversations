@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import ConversationCard from '@/components/ConversationCard';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Character, Conversation } from '@/types';
 import { getProperCharacterName } from '@/utils/characterNames';
 import { getPortraitFileName } from '@/utils/portraitMapping';
 import { usePathname, useRouter } from 'next/navigation';
@@ -17,22 +16,14 @@ const SELECTED_PARTNERS_KEY = 'selectedPartners';
 // Key for tracking if filters were cleared
 const FILTERS_CLEARED_KEY = 'filtersCleared';
 
-interface CharacterPageClientProps {
-  character: Character;
-  conversations: Conversation[];
-  allCharacters: Character[];
-}
-
 export default function CharacterPageClient({ 
   character, 
-  conversations, 
-  allCharacters 
-}: CharacterPageClientProps) {
+  conversations
+}) {
   const [showIncomplete, setShowIncomplete] = useState(true);
-  const [selectedPartners, setSelectedPartners] = useState<string[]>([]);
+  const [selectedPartners, setSelectedPartners] = useState([]);
   const currentPath = usePathname();
   const router = useRouter();
-  const [refreshKey, setRefreshKey] = useState(0);
   
   // Store current path for navigation tracking and retrieve filters from session storage
   useEffect(() => {
@@ -119,14 +110,14 @@ export default function CharacterPageClient({
   });
   
   // Helper function to get the correct minimap icon path
-  const getIconPath = (characterName: string) => {
+  const getIconPath = (characterName) => {
     // Get the correct portrait file name
     const portraitName = getPortraitFileName(characterName);
     return `/minimapIcons/${portraitName}_mm_psd.png`;
   };
   
   // Toggle a partner in the selected partners array
-  const togglePartner = (partner: string) => {
+  const togglePartner = (partner) => {
     setSelectedPartners(prev => {
       if (prev.includes(partner)) {
         return prev.filter(p => p !== partner);
@@ -146,11 +137,18 @@ export default function CharacterPageClient({
   };
   
   // Handle conversation card click
-  const handleConversationClick = (conversationId: string) => {
+  const handleConversationClick = (conversationId) => {
     // Store current path before navigating
     sessionStorage.setItem(PREV_PATH_KEY, currentPath);
-    // Navigate to conversation
-    router.push(`/conversations/${conversationId}`);
+    // Store selected partners for navigation context
+    if (selectedPartners.length > 0) {
+      sessionStorage.setItem(SELECTED_PARTNERS_KEY, JSON.stringify(selectedPartners));
+    } else {
+      sessionStorage.removeItem(SELECTED_PARTNERS_KEY);
+    }
+    // Navigate to conversation - encode the conversation ID to handle special characters
+    // Use window.location.href instead of router.push to force a full page reload
+    window.location.href = `/conversations/${encodeURIComponent(conversationId)}`;
   };
   
   // Handle resetting viewed conversations for this character
@@ -217,8 +215,7 @@ export default function CharacterPageClient({
                 sizes="128px"
                 className="object-cover rounded-full"
                 onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/minimapIcons/genericperson_mm_psd.png';
+                  e.target.src = '/minimapIcons/genericperson_mm_psd.png';
                 }}
               />
             </div>
@@ -255,8 +252,7 @@ export default function CharacterPageClient({
                         sizes="16px"
                         className="object-cover rounded-full"
                         onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = '/minimapIcons/genericperson_mm_psd.png';
+                          e.target.src = '/minimapIcons/genericperson_mm_psd.png';
                         }}
                       />
                     </div>
@@ -314,8 +310,7 @@ export default function CharacterPageClient({
                       sizes="16px"
                       className="object-cover rounded-full"
                       onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/minimapIcons/genericperson_mm_psd.png';
+                        e.target.src = '/minimapIcons/genericperson_mm_psd.png';
                       }}
                     />
                   </div>

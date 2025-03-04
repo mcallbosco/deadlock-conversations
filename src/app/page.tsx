@@ -7,7 +7,6 @@ import SearchBar from '@/components/SearchBar';
 import ConversationCard from '@/components/ConversationCard';
 import CharacterCard from '@/components/CharacterCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import Link from 'next/link';
 import { Conversation } from '@/types';
 
 export default function Home() {
@@ -89,7 +88,6 @@ export default function Home() {
                 <CharacterCard
                   key={character.name}
                   name={character.name}
-                  iconPath={character.iconPath}
                   conversationCount={characterConversations.length}
                 />
               );
